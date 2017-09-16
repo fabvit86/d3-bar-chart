@@ -1,19 +1,9 @@
 'use strict'
 
-/*
-data = [
-	["date1", value1],
-	["date2", value2],
-	["date3", value3]
-]
-xElements = ["date1", "date2", "date3"]
-yElements = [value1, value2, value3]
-*/
-
 const url = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json'
 $.getJSON(url, (json, textStatus) => {
 	const data = json.data
-	// create an array of objects date => gross:
+	// create an array of objects {date => gross}:
 	const dataObject = data.map((elem) => {
 		return {
 			"date": elem[0],
@@ -47,6 +37,7 @@ $.getJSON(url, (json, textStatus) => {
 	const chartHeight = 600 - margins.top - margins.bottom
 	const chartWidth = 1000 - margins.left - margins.right
 	const barWidth = chartWidth / numberOfElements
+	const formatTime = d3.timeFormat('%Y %B') // show only the year and the month of a date
 
 	// x scale (years):
 	const x = d3.scaleTime().domain([firstDate, lastDate]).range([0, chartWidth])
@@ -62,6 +53,11 @@ $.getJSON(url, (json, textStatus) => {
 										.append("g") // add this g to set left and top margins
     									.attr("transform", "translate(" + margins.left + "," + margins.top + ")")
 
+  // tooltip div:
+  const tooltip = d3.select('#mainContainer').append("div")
+  									.classed("tooltip", true)
+  									.style("opacity", 0) // start invisible
+
 	// bars:
 	const bar = svgchart.selectAll("g") // each bar is a g element
 						    .data(dataObject)
@@ -71,12 +67,26 @@ $.getJSON(url, (json, textStatus) => {
 
   bar.append("rect") // insert a rect in the g element
   		.attr("class", "bar")
-  		// .attr("x", 1)
-  		// .attr("x", (d) => x(d.date))
   		// .attr("x", (d) => x(new Date(d.date)))
   		.attr("y", (d) => y(d.gross)) // y coordinate of the rect (ex: if y height is 10px, y must be set to chartHeight-10)
 	    .attr("width", barWidth - 1) // width of the rect, leave 1px for bars' spacing
 	    .attr("height", (d) => chartHeight - y(d.gross)) // height of the rect
+	    .on("mouseover", function(d) { // DO NOT use arrow function in this case
+	    	d3.select(this).classed("overed", true) // add "overed" class to the rect
+	    	tooltip.transition()
+	    		.duration(300)
+	    		.style("opacity", 1) // show the tooltip
+	    	tooltip.html(formatTime(d.date) + "<br/>" + d.gross)
+         .style("left", (d3.event.pageX) + "px")
+         .style("top", (d3.event.pageY - 28) + "px");
+	    })
+	    .on("mouseout", function(d) {
+	    	d3.select(this).classed("overed", false)
+	    	tooltip.transition()
+	    		.duration(300)
+	    		.style("opacity", 0)
+	    	tooltip.html("")
+	    })
 
 	// svg.append("g")
  //    .attr("class", "y axis")
@@ -109,114 +119,3 @@ $.getJSON(url, (json, textStatus) => {
 	 		.attr("dx", ".8em") // x offset
 	 		.attr("dy", "-0.25em")
 })
-
-/*
-// example:
-const data = [
-	{ letter: "A", frequency: 0.08167 },
-	{ letter: "B", frequency: 0.01492 },
-	{ letter: "C", frequency: 0.02780 },
-	{ letter: "D", frequency: 0.04253 },
-	{ letter: "E", frequency: 0.12702 },
-	{ letter: "F", frequency: 0.02288 },
-	{ letter: "G", frequency: 0.02022 },
-	{ letter: "H", frequency: 0.06094 },
-	{ letter: "I", frequency: 0.06973 },
-	{ letter: "J", frequency: 0.00153 },
-	{ letter: "K", frequency: 0.00747 },
-	{ letter: "L", frequency: 0.04025 },
-	{ letter: "M", frequency: 0.02517 },
-	{ letter: "N", frequency: 0.06749 },
-	{ letter: "O", frequency: 0.07507 },
-	{ letter: "P", frequency: 0.01929 },
-	{ letter: "Q", frequency: 0.00098 },
-	{ letter: "R", frequency: 0.05987 },
-	{ letter: "S", frequency: 0.06333 },
-	{ letter: "T", frequency: 0.09056 },
-	{ letter: "U", frequency: 0.02758 },
-	{ letter: "V", frequency: 0.01037 },
-	{ letter: "W", frequency: 0.02465 },
-	{ letter: "X", frequency: 0.00150 },
-	{ letter: "Y", frequency: 0.01971 },
-	{ letter: "Z", frequency: 0.00074 },
-	{ letter: "Aa", frequency: 0.08167 },
-	{ letter: "Ba", frequency: 0.01492 },
-	{ letter: "Ca", frequency: 0.02780 },
-	{ letter: "Da", frequency: 0.04253 },
-	{ letter: "Ea", frequency: 0.12702 },
-	{ letter: "Fa", frequency: 0.02288 },
-	{ letter: "Ga", frequency: 0.02022 },
-	{ letter: "Ha", frequency: 0.06094 },
-	{ letter: "Ia", frequency: 0.06973 },
-	{ letter: "Ja", frequency: 0.00153 },
-	{ letter: "Ka", frequency: 0.00747 },
-	{ letter: "La", frequency: 0.04025 },
-	{ letter: "Ma", frequency: 0.02517 },
-	{ letter: "Na", frequency: 0.06749 },
-	{ letter: "Oa", frequency: 0.07507 },
-	{ letter: "Pa", frequency: 0.01929 },
-	{ letter: "Qa", frequency: 0.00098 },
-	{ letter: "Ra", frequency: 0.05987 },
-	{ letter: "Sa", frequency: 0.06333 },
-	{ letter: "Ta", frequency: 0.09056 },
-	{ letter: "Ua", frequency: 0.02758 },
-	{ letter: "Va", frequency: 0.01037 },
-	{ letter: "Wa", frequency: 0.02465 },
-	{ letter: "Xa", frequency: 0.00150 },
-	{ letter: "Ya", frequency: 0.01971 },
-	{ letter: "Za", frequency: 0.00074 }
-]
-
-var margin = {top: 40, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-var formatPercent = d3.format(".0%");
-
-var x = d3.scaleBand()
-    .rangeRound([0, width], .1);
-
-var y = d3.scaleLinear()
-    .range([height, 0]);
-
-var xAxis = d3.axisBottom(x)
-var yAxis = d3.axisLeft(y).tickFormat(formatPercent)
-
-var svg = d3.select("#graph").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-x.domain(data.map((d) => d.letter))
-y.domain([0, d3.max(data, (d) => d.frequency)])
-
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-  .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("Frequency");
-
-svg.selectAll(".bar")
-    .data(data)
-  .enter().append("rect")
-    .attr("class", "bar")
-    .attr("x", function(d) { return x(d.letter); })
-    .attr("width", x.bandwidth())
-    .attr("y", function(d) { return y(d.frequency); })
-    .attr("height", function(d) { return height - y(d.frequency); })
-
-function type(d) {
-  d.frequency = +d.frequency;
-  return d;
-}
-*/
