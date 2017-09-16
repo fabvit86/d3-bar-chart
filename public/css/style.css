@@ -9,12 +9,16 @@
 }
 
 /* SVG */
-#svgchart rect {
+#svgchart rect, #svgchart text.axisLabel {
 	fill: steelblue;
 }
 
 #svgchart text {
-	fill: white;
+	fill: red;
 	font: 10px sans-serif;
 	text-anchor: end;
+}
+
+#svgchart text.axisLabel {
+	font-size: 18px;
 }
