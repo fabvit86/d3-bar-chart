@@ -13,31 +13,13 @@ $.getJSON(url, (json, textStatus) => {
 	const numberOfElements = data.length
 	const firstDate = new Date(data[0][0]),
 	 			lastDate  = new Date(data[numberOfElements-1][0])
-	const firstYear = firstDate.getFullYear()
-	const lastYear = new Date(data[numberOfElements-1][0]).getFullYear()
-	let minGross = data[0][1],
-		  maxGross = data[0][1]
-	let xElements = [] // all elements on the x axis
-	let yElements = [] // all elements on the y axis
-	data.forEach((element) => {
-		let xDate = element[0]
-		let yGross = element[1]
-		xElements.push(xDate)
-		yElements.push(yGross)
-		let xYear = new Date(xDate).getFullYear()
-		if (yGross > maxGross) {
-			maxGross = yGross
-		}
-		if (yGross < minGross) {
-			minGross = yGross
-		}
-	})
 
-	const margins = {top: 20, right: 20, bottom: 30, left: 40}
+	const margins = {top: 20, right: 20, bottom: 30, left: 120}
 	const chartHeight = 600 - margins.top - margins.bottom
 	const chartWidth = 1000 - margins.left - margins.right
 	const barWidth = chartWidth / numberOfElements
 	const formatTime = d3.timeFormat('%Y %B') // show only the year and the month of a date
+	const formatCurrency = d3.format("$,.2f") // show local currency and round to 2 decimals
 
 	// x scale (years):
 	const x = d3.scaleTime().domain([firstDate, lastDate]).range([0, chartWidth])
@@ -76,9 +58,10 @@ $.getJSON(url, (json, textStatus) => {
 	    	tooltip.transition()
 	    		.duration(300)
 	    		.style("opacity", 1) // show the tooltip
-	    	tooltip.html(formatTime(d.date) + "<br/>" + d.gross)
-         .style("left", (d3.event.pageX) + "px")
-         .style("top", (d3.event.pageY - 28) + "px");
+	    		console.log(d3.select('.tooltip').node().height)
+	    	tooltip.html(formatTime(new Date(d.date)) + "<hr><span class='gross'>" + formatCurrency(d.gross) + " Billions</span>")
+         .style("left", (d3.event.pageX - d3.select('.tooltip').node().offsetWidth - 5) + "px")
+         .style("top", (d3.event.pageY - d3.select('.tooltip').node().offsetHeight) + "px");
 	    })
 	    .on("mouseout", function(d) {
 	    	d3.select(this).classed("overed", false)

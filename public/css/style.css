@@ -9,8 +9,12 @@
 }
 
 /* SVG */
-#svgchart rect, #svgchart text.axisLabel {
-	fill: steelblue;
+#svgchart rect {
+	fill: darkseagreen;
+}
+
+#svgchart text.axisLabel {
+	fill: darkblue;
 }
 
 #svgchart rect.overed {
@@ -30,12 +34,16 @@
 div.tooltip {
   position: absolute;
   text-align: center;
-  width: 60px;
-  height: 28px;
+  width: 120px;
+  height: 70px;
   padding: 2px;
-  font: 12px sans-serif;
-  background: lightsteelblue;
+  font: 16px sans-serif;
+  background: deepskyblue;
   border: 0px;
   border-radius: 8px;
   pointer-events: none; /* keep the mouseover when over the tooltip */
+}
+
+.tooltip span.gross {
+	font-weight: bold
 }
