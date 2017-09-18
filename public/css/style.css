@@ -1,19 +1,25 @@
-/* HTML */
-#graph div {
-  font: 10px sans-serif;
-  background-color: steelblue;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: lightgreen;
+body {
+	background-color: lightblue;
+}
+h1 {
+	text-align: center;
+	color: darkblue;
+	font-family: sans-serif;
+}
+#mainContainer {
+	text-align: center;
 }
 
 /* SVG */
+#svgchart {
+	background-color: white;
+}
+
 #svgchart rect {
 	fill: darkseagreen;
 }
 
-#svgchart text.axisLabel {
+#svgchart text.axisLabel, .smallText {
 	fill: darkblue;
 }
 
@@ -21,9 +27,9 @@
 	fill: red;
 }
 
-#svgchart text {
+#svgchart g.tick text{
 	fill: red;
-	font: 10px sans-serif;
+	font: 14px sans-serif;
 	text-anchor: end;
 }
 
@@ -45,5 +51,17 @@ div.tooltip {
 }
 
 .tooltip span.gross {
-	font-weight: bold
+	font-weight: bold;
+}
+
+#svgchart .smallText {
+	font-size: 10px;
+}
+
+#footer {
+  color: black;
+  text-align: center;
+}
+#footer a{
+	color: blue;
 }
